@@ -13,7 +13,6 @@ X,y = get_XY("data/gaus_2D_train.csv");
 Xte, yte = get_XY("data/gaus_2D_test.csv");
 
 
-
 ####################### BATCH Gradient Descent ####################
 predictor_function = batchgd(X, y, 0, 200, 1);
 batch_score, preds = evaluate(Xte, yte, predictor_function)
