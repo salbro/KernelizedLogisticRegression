@@ -2,19 +2,31 @@ module KernLogRegUtils
 
 export give_gaus_kern, sigmoid, get_σ, get_γ, create_kernel_matrix, cost, predict, evaluate
 
-
-function give_gaus_kern(s)
+"""
+Description: returns a gaussian kernel function for a given σ
+Input: σ (a number)
+Output: a gaussian (RBF) kernel function
+"""
+function give_gaus_kern(σ)
     function gaus_kern(x1,x2)
-        return e^((-norm(x1-x2)^2)/(2*s^2))
+        return e^((-norm(x1-x2)^2)/(2*σ^2))
     end
     return gaus_kern
 end
 
+"""
+Description: Vector-scalable, element-wise sigmoid squashing function
+Inputs: x (vector or scalar)
+"""
 function sigmoid(x)
     1 ./ (1 .+ e.^(-x))
 end
 
-# finds a good value of σ for the gaussian kernel. average distances of data points
+"""
+Description: Finds a reasonable value for Gaussian kernel's σ parameter,
+             based on average distance between points in data matrix
+Inputs: X (data matrix)
+"""
 function get_σ(X)
     n,p = size(X)
     tot = 0.0
@@ -25,11 +37,28 @@ function get_σ(X)
     return avg
 end
 
+
+"""
+Description: Finds a reasonable step size for GD based on the maximum eigenvalue of the Hessian 
+Inputs:
+    K: kernel matrix
+    λ: regularization parameter
+Outputs:
+    γ: step-size
+"""
 function get_γ(K, λ)
     n = size(K)[1]
     return 1.0 / maximum(eigvals(K./n + λ.*eye(n)))
 end
 
+"""
+Description: Builds a kernel matrix from a kernel function and a data matrix
+Inputs:
+    kern: kernel function
+    X: data matrix
+Returns:
+    K: kernel matrix
+"""
 function create_kernel_matrix(kern, X)
     n = size(X)[1]
     K = zeros((n,n))
@@ -41,11 +70,27 @@ function create_kernel_matrix(kern, X)
     return K
 end
 
+
+"""
+Description: Calculates the value of the log-likelihood objective function (as a cost)
+             for an iteration of gradient descent
+Inputs:
+    c: the current value of the alternate weight vector c
+    K: the kernel matrix
+    y: the training labels (0, 1)
+"""
 function cost(c, K, y)
     return -sum(log.(sigmoid(y.*(K*c))))
 end
 
-
+"""
+Description: Returns predictions for a test set and a predictor function
+Inputs: 
+    test_x: a list of test points, same dimension as training points
+    f: a predict function which maps from input space into {0,1}
+Outputs:
+    preds: list of {0,1} predictions, one for each element in the test set
+"""
 function predict(test_x, f)
     n = size(test_x)[1]
     preds = zeros(n)
@@ -55,6 +100,17 @@ function predict(test_x, f)
     return preds
 end
 
+
+"""
+Description: Calculates both the accuracy and the very predictions of a function on the test set
+Inputs:
+    test_x: a list of test points, same dimension as training points
+    test_y: testing labels {0,1}
+    f: a predict function which maps from input space into {0,1}
+Returns: a tuple (accuracy, predictions)
+    accuracy: the accuracy, between 0 and 1, of the fitted predictor on the test set
+    preds: list of {0,1} predictions, one for each element in the test set
+"""
 function evaluate(test_x, test_y, f)
     tot = 0
     preds = zeros(length(test_y))

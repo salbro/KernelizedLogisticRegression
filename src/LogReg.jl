@@ -4,7 +4,21 @@ export batchgd, sgd, minibatchgd
 
 using KernLogRegUtils;
 
+"""
+Description: performs batch gradient descent for the log-likelihood objective function
+Inputs:
+    X: the (n x p) training data matrix (rows are points)
+    y: the (n x 1) vector of training labels {0,1}
+    λ: L2 regularization parameter
+    n_epochs: the number of gradient descent iterations
+    γ: the learning rate
+    ϵ: termination threshold; GD will stop early if objective value doesn't stop by > ϵ%
+    kernel: the kernel function (default linear kernel)
 
+Outputs:
+    prob_predictor: a function which maps an input data point to a probability that its label is 1
+
+"""
 function batchgd(X, y, λ, n_epochs, γ=0.01, ϵ=0.01, kernel=dot)    
     n = size(X)[1]
 
@@ -40,7 +54,11 @@ function batchgd(X, y, λ, n_epochs, γ=0.01, ϵ=0.01, kernel=dot)
     return prob_predictor
 end
 
-
+"""
+Description: performs stochastic gradient descent for the log-likelihood objective function
+Parameters and output same as above.
+γ will be calculated if not provided
+"""
 function sgd(X, y, λ, n_epochs, γ=nothing, ϵ=0.01, kernel=dot)    
     n = size(X)[1]
 
@@ -78,6 +96,11 @@ function sgd(X, y, λ, n_epochs, γ=nothing, ϵ=0.01, kernel=dot)
 end
 
 
+"""
+Description: performs minibatch gradient descent for the log-likelihood objective function
+Parameters and output same as above, with one addition:
+    batch_size: the size of each batch during gradient descent (recommend batch_size around 30)
+"""
 function minibatchgd(X, y, λ, n_epochs, batch_size, γ=0.01, ϵ=0.01, kernel=dot)    
     n = size(X)[1]
   
