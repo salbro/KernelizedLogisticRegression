@@ -5,17 +5,10 @@ export batchgd, sgd, minibatchgd
 using KernLogRegUtils;
 
 
-function batchgd(X, y, λ, n_epochs, γ=0.01, ϵ=0.01, kern="gaussian")    
+function batchgd(X, y, λ, n_epochs, γ=0.01, ϵ=0.01, kernel=dot)    
     n = size(X)[1]
-    if kern == "gaussian"
-        σ = get_σ(X)
-        k = give_gaus_kern(σ)
-        
-    elseif kern == "linear"
-        k = dot
-    end
-    
-    K = create_kernel_matrix(k, X)
+
+    K = create_kernel_matrix(kernel, X)
             
     c = zeros(n)
     objectives = zeros(n_epochs)
@@ -38,7 +31,7 @@ function batchgd(X, y, λ, n_epochs, γ=0.01, ϵ=0.01, kern="gaussian")
     function prob_predictor(z)
         tot = 0
         for i in 1:n
-            tot += k(X[i,:], z)*c[i]
+            tot += kernel(X[i,:], z)*c[i]
         end
 
         return 1.0 / (1 + e^(-tot))
@@ -48,17 +41,11 @@ function batchgd(X, y, λ, n_epochs, γ=0.01, ϵ=0.01, kern="gaussian")
 end
 
 
-function sgd(X, y, λ, n_epochs, γ=nothing, ϵ=0.01, kern="gaussian")    
+function sgd(X, y, λ, n_epochs, γ=nothing, ϵ=0.01, kernel=dot)    
     n = size(X)[1]
-    if kern == "gaussian"
-        σ = get_σ(X)
-        k = give_gaus_kern(σ)
-        
-    elseif kern == "linear"
-        k = dot
-    end
+
     
-    K = create_kernel_matrix(k, X)
+    K = create_kernel_matrix(kernel, X)
     
     if γ == nothing
         γ = get_γ(K, λ)
@@ -81,7 +68,7 @@ function sgd(X, y, λ, n_epochs, γ=nothing, ϵ=0.01, kern="gaussian")
     function prob_predictor(z)
         tot = 0
         for i in 1:n
-            tot += k(X[i,:], z)*c[i]
+            tot += kernel(X[i,:], z)*c[i]
         end
 
         return 1.0 / (1 + e^(-tot))
@@ -91,20 +78,11 @@ function sgd(X, y, λ, n_epochs, γ=nothing, ϵ=0.01, kern="gaussian")
 end
 
 
-function minibatchgd(X, y, λ, n_epochs, batch_size, γ=0.01, ϵ=0.01, kern="gaussian")    
+function minibatchgd(X, y, λ, n_epochs, batch_size, γ=0.01, ϵ=0.01, kernel=dot)    
     n = size(X)[1]
-    if kern == "gaussian"
-        σ = get_σ(X)
-        k = give_gaus_kern(σ)
-        
-    elseif kern == "linear"
-        k = dot
-    end
-    
-    K = create_kernel_matrix(k, X)
-    
-#     γ = get_γ(K, λ)
-        
+  
+    K = create_kernel_matrix(kernel, X)
+            
     c = zeros(n)
         
     for epoch in 1:n_epochs
@@ -115,7 +93,7 @@ function minibatchgd(X, y, λ, n_epochs, batch_size, γ=0.01, ϵ=0.01, kern="gau
     function prob_predictor(z)
         tot = 0
         for i in 1:n
-            tot += k(X[i,:], z)*c[i]
+            tot += kernel(X[i,:], z)*c[i]
         end
 
         return 1.0 / (1 + e^(-tot))
