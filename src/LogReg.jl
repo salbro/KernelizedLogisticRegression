@@ -22,7 +22,11 @@ Outputs:
 function batchgd(X, y, λ, n_epochs, γ=0.01, ϵ=0.01, kernel=dot)    
     n = size(X)[1]
 
-    K = create_kernel_matrix(kernel, X)
+    if kernel==dot
+        K = transpose(X)*X
+    else
+        K = create_kernel_matrix(kernel, X)
+    end
             
     c = zeros(n)
     objectives = zeros(n_epochs)
@@ -63,7 +67,11 @@ function sgd(X, y, λ, n_epochs, γ=nothing, ϵ=0.01, kernel=dot)
     n = size(X)[1]
 
     
-    K = create_kernel_matrix(kernel, X)
+    if kernel==dot
+        K = transpose(X)*X
+    else
+        K = create_kernel_matrix(kernel, X)
+    end
     
     if γ == nothing
         γ = get_γ(K, λ)
@@ -104,8 +112,12 @@ Parameters and output same as above, with one addition:
 function minibatchgd(X, y, λ, n_epochs, batch_size, γ=0.01, ϵ=0.01, kernel=dot)    
     n = size(X)[1]
   
-    K = create_kernel_matrix(kernel, X)
-            
+    if kernel==dot
+        K = transpose(X)*X
+    else
+        K = create_kernel_matrix(kernel, X)
+    end
+    
     c = zeros(n)
         
     for epoch in 1:n_epochs

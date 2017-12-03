@@ -14,6 +14,22 @@ function give_gaus_kern(σ)
     return gaus_kern
 end
 
+
+"""
+Description: returns a polynomial kernel function for a free parameter c and dimension d
+Input: 
+    c: a free offset parameter
+    d: the dimension of the polynomial kernel
+Output: a polynomial kernel function
+"""
+function give_polynomial_kern(c, d)
+    function polynomial_kern(x1,x2)
+        return (dot(x,y) + c)^d
+    end
+    return polynomial_kern
+end
+
+
 """
 Description: Vector-scalable, element-wise sigmoid squashing function
 Inputs: x (vector or scalar)
@@ -121,7 +137,5 @@ function evaluate(test_x, test_y, f)
     end
     return tot*1.0 / n, preds
 end
-
-
 
 end
