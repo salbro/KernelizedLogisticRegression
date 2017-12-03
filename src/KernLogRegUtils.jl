@@ -16,6 +16,27 @@ end
 
 
 """
+Description: Calculates both the accuracy and the very predictions of a function on the test set
+Inputs:
+    test_x: a list of test points, same dimension as training points
+    test_y: testing labels {0,1}
+    f: a predict function which maps from input space into {0,1}
+Returns: a tuple (accuracy, predictions)
+    accuracy: the accuracy, between 0 and 1, of the fitted predictor on the test set
+    preds: list of {0,1} predictions, one for each element in the test set
+"""
+function evaluate(test_x, test_y, f)
+    tot = 0
+    preds = zeros(length(test_y))
+    n = size(test_x)[1]
+    for i in 1:n
+        preds[i] = 1*(f(test_x[i,:])>0.5)
+        tot += 1*(preds[i] == test_y[i])
+    end
+    return tot*1.0 / n, preds
+end
+
+"""
 Description: returns a polynomial kernel function for a free parameter c and dimension d
 Input: 
     c: a free offset parameter
@@ -116,26 +137,5 @@ function predict(test_x, f)
     return preds
 end
 
-
-"""
-Description: Calculates both the accuracy and the very predictions of a function on the test set
-Inputs:
-    test_x: a list of test points, same dimension as training points
-    test_y: testing labels {0,1}
-    f: a predict function which maps from input space into {0,1}
-Returns: a tuple (accuracy, predictions)
-    accuracy: the accuracy, between 0 and 1, of the fitted predictor on the test set
-    preds: list of {0,1} predictions, one for each element in the test set
-"""
-function evaluate(test_x, test_y, f)
-    tot = 0
-    preds = zeros(length(test_y))
-    n = size(test_x)[1]
-    for i in 1:n
-        preds[i] = 1*(f(test_x[i,:])>0.5)
-        tot += 1*(preds[i] == test_y[i])
-    end
-    return tot*1.0 / n, preds
-end
 
 end
