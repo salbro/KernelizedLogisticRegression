@@ -109,7 +109,7 @@ Description: performs minibatch gradient descent for the log-likelihood objectiv
 Parameters and output same as above, with one addition:
     batch_size: the size of each batch during gradient descent (recommend batch_size around 30)
 """
-function minibatchgd(X, y, λ=0, n_epochs=1000, batch_size, γ=0.01, ϵ=0.01, kernel=dot)    
+function minibatchgd(X, y, λ=0, n_epochs=1000, batch_size=30, γ=0.01, ϵ=0.01, kernel=dot)    
     n = size(X)[1]
   
     if kernel==dot
