@@ -14,18 +14,21 @@ Inputs:
     γ: the learning rate
     ϵ: termination threshold; GD will stop early if objective value doesn't stop by > ϵ%
     kernel: the kernel function (default linear kernel)
+    K: the kernel matrix; if left as nothing, the algorithm will build the matrix for you
 
 Outputs:
     prob_predictor: a function which maps an input data point to a probability that its label is 1
 
 """
-function batchgd(X, y, λ=0, n_epochs=1000, γ=0.01, ϵ=0.01, kernel=dot)    
+function batchgd(X, y, λ=0, n_epochs=1000, γ=0.01, ϵ=0.01, kernel=dot, K=nothing)    
     n = size(X)[1]
 
-    if kernel==dot
-        K = transpose(X)*X
-    else
-        K = create_kernel_matrix(kernel, X)
+    if K == nothing   
+        if kernel==dot
+            K = transpose(X)*X
+        else
+            K = create_kernel_matrix(kernel, X)
+        end
     end
             
     c = zeros(n)
@@ -63,14 +66,15 @@ Description: performs stochastic gradient descent for the log-likelihood objecti
 Parameters and output same as above.
 γ will be calculated if not provided
 """
-function sgd(X, y, λ=0, n_epochs=1000, γ=nothing, ϵ=0.01, kernel=dot)    
+function sgd(X, y, λ=0, n_epochs=1000, γ=nothing, ϵ=0.01, kernel=dot, K=nothing)    
     n = size(X)[1]
 
-    
-    if kernel==dot
-        K = transpose(X)*X
-    else
-        K = create_kernel_matrix(kernel, X)
+    if K == nothing
+        if kernel==dot
+            K = transpose(X)*X
+        else
+            K = create_kernel_matrix(kernel, X)
+        end
     end
     
     if γ == nothing
@@ -109,13 +113,15 @@ Description: performs minibatch gradient descent for the log-likelihood objectiv
 Parameters and output same as above, with one addition:
     batch_size: the size of each batch during gradient descent (recommend batch_size around 30)
 """
-function minibatchgd(X, y, λ=0, n_epochs=1000, batch_size=30, γ=0.01, ϵ=0.01, kernel=dot)    
+function minibatchgd(X, y, λ=0, n_epochs=1000, batch_size=30, γ=0.01, ϵ=0.01, kernel=dot, K=nothing)    
     n = size(X)[1]
   
-    if kernel==dot
-        K = transpose(X)*X
-    else
-        K = create_kernel_matrix(kernel, X)
+    if K == nothing
+        if kernel==dot
+            K = transpose(X)*X
+        else
+            K = create_kernel_matrix(kernel, X)
+        end
     end
     
     c = zeros(n)
