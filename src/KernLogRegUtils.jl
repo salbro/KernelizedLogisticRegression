@@ -1,6 +1,6 @@
 module KernLogRegUtils
 
-export give_gaus_kern, sigmoid, get_σ, get_γ, create_kernel_matrix, cost, predict, evaluate
+export give_gaus_kern, sigmoid, get_σ, get_γ, create_kernel_matrix, cost, predict, evaluate, give_polynomial_kern, give_sigmoid_kern
 
 """
 Description: returns a gaussian kernel function for a given σ
@@ -49,6 +49,21 @@ function give_polynomial_kern(c, d)
     end
     return polynomial_kern
 end
+
+
+"""
+Description: returns a sigmoid kernel function for a given c
+Input: c (a number)
+Output: a sigmoid kernel function
+"""
+function give_sigmoid_kern(c)
+    function sigmoid_kern(x1,x2)
+        a = dot(x1, x2) + c
+        return 1.0*(e^a - e^(-a)) / (e^a + e^(-a))
+    end
+    return sigmoid_kern
+end
+
 
 
 """
